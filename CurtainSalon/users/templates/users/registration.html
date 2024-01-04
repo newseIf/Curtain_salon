@@ -1,0 +1,44 @@
+{% extends 'Salon/index.html' %}
+{% load static %}
+<link type="text/css"  href="{% static 'users/css/register.css' %}" rel="stylesheet" />
+
+{% block content %}
+<style type="text/css">
+    h1 {margin-left: 720px;
+    font-size: 65px!important;}
+    form {}
+    button {
+    margin-top: 10px;
+    width: 240px;
+    height: 50px;
+    margin-left: 200px;
+    font-size: 22px!important;
+    }
+    label {font-size: 25px;}
+    .form-control {width: 80%!important;
+     }
+     .form-control input {
+     padding 2%;
+
+     }
+     .form-control input[type='text'] {
+     font-size: 55px!important;
+     }
+    .cont {
+     border: 1px solid #212529;
+     width: 48%;
+     padding: 50px;
+     margin-left: 500px;
+    }
+</style>
+    <h1 style="">Регистрация</h1>
+    <div class="cont">
+        <form method="post" class="input-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <div class="form-error">{{ errors}}</div>
+            <button class="btn btn-outline-warning" type="submit">Зарегистрироваться</button>
+        </form>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{title}}</title>
+	<link type="text/css" href="{% static 'Salon/css/style.css' %}" rel="stylesheet" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+<table class="table-page" border=0 cellpadding="0" cellspacing="0">
+<tr><td valign=top>
+{% block mainmenu %}
+    <style>
+    #comments {
+    word-wrap: break-word;
+    width: 100%;
+    }
+
+     #comments-form,
+     .comments{
+        width: 400px;
+        margin: 50px auto;
+    }
+
+    #comments-form input,
+    #comments-form textarea {
+        width: 400px;
+        margin-bottom: 10px;
+        padding: 15px 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 20px;
+    }
+    #comments-form textarea {
+        resize: none;
+        height: 100px;
+    }
+    #comments-form button {
+        border-radius: 5px;
+        border: 0;
+        background: #fdc073;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: background 600ms ease;
+    }
+    #comments-form button:hover {
+    background: #ccc;
+    }
+        .header {height: 80px!important;}
+        #mainmenu {font-size: 28px!important;}
+        .selected  {
+        font-size: 30px!important;
+        color: #fdc073!important;
+        }
+        .left-chapters ul {width: 300px!important;}
+        a:hover {
+        color: #fcd5a4!important;
+        }
+        .mainmenu {
+        margin-left: 300px!important;
+        }
+        .comments .comment {
+        width: 400px;
+        background-color: #eee;
+        border: 1px solid silver;
+        border-radius: 5px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        }
+        .comments .comment .delete {
+        float: right;
+        cursor: pointer;
+        color: #fdc073;
+        font-weight: bold;
+        }
+        .comments .comment .delete:hover {color: #333;}
+        .comments .comment .name {font-weight: bold;}
+        .comments .comment .mess {margin-top: 10px;
+        }
+
+
+    </style>
+		<div class="header">
+			<ul id="mainmenu" class="mainmenu">
+			<li class="logo"><a href="#"><div class="logo"></div></a></li>
+
+                <li><a href="{% url 'comment' %}">Отзывы</a></li>
+                <li><a href="{% url 'about' %}">Контакты</a></li>
+                {% if request.user.is_authenticated %}
+                <li><a href="{% url 'cart:view_cart' %}">Корзина</a></li>
+                <li class="last"> {{user.username}} | <a href="{% url 'logout' %}">Выйти</a></li>
+                {% else %}
+                 <li class="last"><a href="{% url 'register' %}">Регистрация</a> | <a href="{% url 'login' %}">Войти</a></li>
+                {% endif %}
+			</ul>
+			<div class="clear"></div>
+		</div>
+{% endblock mainmenu %}
+
+<table class="table-content" border=0 cellpadding="0" cellspacing="0">
+<tr>
+<!-- Sidebar слева -->
+	<td valign="top" class="left-chapters">
+	<ul id="leftchapters">
+{% if type_selected == 0 %}
+		<li class="selected">Продукция</li>
+{% else %}
+		<li><a href="{% url 'home' %}">Продукция</a></li>
+{% endif %}
+
+{% for t in type %}
+	{% if t.pk == type_selected %}
+		<li class="selected">{{t.name_product_type}}</li>
+	{% else %}
+		<li><a href="{{ t.get_absolute_url }}">{{t.name_product_type}}</a></li>
+	{% endif %}
+{% endfor %}
+	</ul>
+</td>
+<!-- Конец Sidebar'а -->
+<td valign="top" class="content">
+	<!-- Хлебные крошки -->
+	{% block breadcrumbs %}
+	{% endblock %}
+
+<!-- Блок контента -->
+	<div class="content-text">
+{% block content %}
+        <form id="comments-form" autocomplete="off">
+            <input type="text" name="name" placeholder="Введите ваше имя">
+            <textarea name="comment" placeholder="Введите сообщение"></textarea>
+            <div id="error"></div>
+            <button type="button">Отправить</button>
+        </form>
+        <section class="comments">
+            <h3>Комментари (<span class="count-comm">0</span>)</h3>
+            <div id="comments">
+                Пока комментарием нет
+            </div>
+        </section>
+{% endblock %}
+	</div>
+
+<!-- Конец блока контента -->
+    <script>
+let btnForm = document.querySelector("#comments-form button");
+let countComments = 0;
+let idComment = 0;
+
+
+btnForm.onclick = function() {
+   idComment++;
+   let form = document.querySelector("#comments-form");
+   if(form.name.value.length < 4 ) {
+   document.querySelector("#error").innerHTML = "Длина имени не менее 4 символов";
+   return false;
+   } else if(form.comment.value.length < 10 ) {
+   document.querySelector("#error").innerHTML = "Длина сообщения не менее 10 символов";
+   return false;
+   }
+   document.querySelector("#error").innerHTML = "";
+
+   if(countComments == 0)
+     document.querySelector("#comments").innerHTML = "";
+
+   countComments++;
+   document.querySelector(".count-comm").innerHTML = countComments;
+
+   let newComment = "<div class='comment' id='block-" + idComment +"'>" +
+   "<span class='delete' onclick='delComm("+ idComment +")'>&times</span>" +
+   "<p class='name'>" + form.name.value +"</p>" +
+   "<p class='mess'>" + form.comment.value +"</p>" +
+   "</div>";
+
+   document.querySelector("#comments").insertAdjacentHTML('afterbegin',
+   newComment);
+
+   form.comment.value = "";
+};
+
+   function delComm(id) {
+        document.querySelector("#block-" + id).remove();
+
+       countComments--;
+       document.querySelector(".count-comm").innerHTML = countComments;
+
+       if(countComments == 0 )
+       document.querySelector("#comments").innerHTML = "Пока комментариев нет";
+
+   }
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+{% extends 'Salon/index.html' %}
+
+{% block content %}
+
+<style type="text/css">
+    h1 {margin-left: 720px;
+    font-size: 65px!important;}
+    form {}
+    button {
+    margin-top: 10px;
+    width: 240px;
+    height: 50px;
+    margin-left: 200px;
+    font-size: 22px!important;
+    }
+    label {font-size: 25px;}
+    .form-control {width: 80%!important;
+     }
+    .cont {
+
+     width: 48%;
+     padding: 50px;
+     margin-left: 500px;
+    }
+    .form-auth input{
+    display: block;
+    width: 96%;
+    margin-top: 5px;
+    border-radius: 5px;
+    padding: 2%;
+    }
+
+</style>
+<h1>Авторизация</h1>
+<div class="cont">
+    <form method="post" class="form-auth">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-outline-warning" type="submit">Войти</button>
+    </form>
+</div>
+
+{% endblock %}

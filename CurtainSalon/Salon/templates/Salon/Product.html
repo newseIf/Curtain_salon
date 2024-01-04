@@ -1,0 +1,74 @@
+{% extends 'Salon/index.html' %}
+{% load static %}
+
+<link type="text/css" href="{% static 'Salon/css/product.css' %}" rel="stylesheet" />
+
+{% block content %}
+
+<style>
+
+* {margin: 0; padding: 0;}
+.content {background-color: silver;}
+
+.list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-gap: 1em;
+}
+
+.info {
+    background-color: #fff;
+    padding: 30px;
+    border: 1px solid #000;
+    display: grid;
+}
+.info:hover {
+    box-shadow: -2px 6px 15px 17px rgba(42,39,39,0.43);
+-webkit-box-shadow: -2px 6px 15px 17px rgba(42,39,39,0.43);
+-moz-box-shadow: -2px 6px 15px 17px rgba(42,39,39,0.43);
+}
+
+ul {list-style: none;}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+img  {
+    height: 150px;
+    weight: 500px;
+}
+a {
+font-size: 30px;
+text-align: center;
+text-decoration: none;
+margin-top: 20px;
+color: #3F4137;
+}
+a:hover {
+text-decoration: none;
+font-size: 33px;
+}
+
+li {
+font-size: 20px;
+font-family: Copperplate;
+}
+</style>
+
+    <ul class="list">
+            {% for p in product %}
+            <div class="info">
+                <li> <img src="{{p.photo}}"></li>
+                <li><h2>{{p.name}}</h2></li>
+                <li>Размер: {{p.size}} м.</li>
+                <li>Цена: {{p.price}} руб.</li>
+                <a href="{% url 'cart:del_to_cart' p.product_id %}" >Убавить кол-во</a>
+                <a class="buy-now-button" href="{% url 'cart:add_to_cart' p.product_id %}" >Добавить в корзину</a>
+            </div>
+        {% endfor %}
+    </ul>>
+
+{% endblock %}
+
+
